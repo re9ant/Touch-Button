@@ -1,0 +1,47 @@
+using System;
+using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
+
+public class FixedButton : MonoBehaviour,IPointerDownHandler, IPointerUpHandler
+{
+    public bool pressed = false;
+    public string buttonName;
+
+    public event EventHandler onButtonPressed;
+    Image image;
+    [SerializeField] Color originalColor;
+    [SerializeField] Color targetColor;
+
+    private void Awake()
+    {
+        image = GetComponent<Image>();
+        if (image == null) return;
+        originalColor = image.color;
+    }
+
+    void HighlightColor()
+    {
+        if (!image) return;
+        image.color = targetColor;
+    }
+    
+    void ResetColor()
+    {
+        if (!image) return;
+        image.color = originalColor;
+    }
+
+    public void OnPointerDown(PointerEventData eventData)
+    {
+        pressed = true;
+        HighlightColor();
+        onButtonPressed?.Invoke(this, EventArgs.Empty);
+    }
+
+    public void OnPointerUp(PointerEventData eventData)
+    {
+        pressed = false;
+        ResetColor();
+    }
+}
